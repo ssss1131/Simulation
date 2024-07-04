@@ -6,6 +6,10 @@ import java.util.Scanner;
 
 public class InputInformationForCard {
     private static final Scanner scanner = new Scanner(System.in);
+    private static final double ROCK_CELLS_PERCENTAGE = 0.10;
+    private static final double TREE_CELLS_PERCENTAGE = 0.15;
+    private static final double MAX_GRASS_CELLS_PERCENTAGE = 0.5;
+
 
     public static Map<String, Integer> input() {
         Map<String, Integer> result = new HashMap<>();
@@ -16,23 +20,19 @@ public class InputInformationForCard {
         int width = checkForValidInput(min, max);
         result.put("Width", width);
 
-        max = 25; // for height
+        max = 25;
         System.out.printf("Please enter height of map(MIN %d MAX %d)%n", min, max);
         int height = checkForValidInput(min, max);
         result.put("Height", height);
 
-        min = 0;
-        max = (int) (width * height * 0.10);
-        System.out.printf("Please enter quantity of rock(MIN %d MAX %d)%n", min, max);
-        int rockCells = checkForValidInput(min, max);
+        int rockCells = (int) (width * height * ROCK_CELLS_PERCENTAGE);
         result.put("Rock", rockCells);
 
-        max = (int) (width * height * 0.15);
-        System.out.printf("Please enter quantity of tree(MIN %d MAX %d)%n", min, max);
-        int treeCells = checkForValidInput(min, max);
+        int treeCells = (int) (width * height * TREE_CELLS_PERCENTAGE);
         result.put("Tree", treeCells);
 
-        max = (int) (width * height * 0.5);
+        min = 0;
+        max = (int) (width * height * MAX_GRASS_CELLS_PERCENTAGE);
         System.out.printf("Please enter quantity of grass(MIN %d MAX %d)%n", min, max);
         int grassCells = checkForValidInput(min, max);
         result.put("Grass", grassCells);

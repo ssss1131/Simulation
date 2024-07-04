@@ -1,16 +1,20 @@
 package main.java.ssss.Entity;
 
-import main.java.ssss.Coordinates;
+import main.java.ssss.Coordinates.Coordinates;
 
 abstract public class Entity {
-    public Coordinates coordinates;
+    private  Coordinates coordinates;
+
 
     public Entity(Coordinates coordinates) {
         this.coordinates = coordinates;
     }
 
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName() + " at coordinates: " + coordinates;
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
     }
 }

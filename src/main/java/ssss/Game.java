@@ -1,22 +1,23 @@
 package main.java.ssss;
 
+import main.java.ssss.Action.Actions;
 import main.java.ssss.Card.Card;
-import main.java.ssss.Card.CardConsoleRenderer;
-import main.java.ssss.Card.InputInformationForCard;
+import main.java.ssss.Card.Renderer.CardConsoleRenderer;
 
 import java.util.Map;
 
 public class Game {
-    public  void gameLoop(){
+    private final Card card;
+    private final CardConsoleRenderer renderer;
+    private static final int PAUSE_TIME_MS = 1000;
 
-        CardConsoleRenderer renderer = new CardConsoleRenderer();
+    public Game(Card card, CardConsoleRenderer renderer) {
+        this.card = card;
+        this.renderer = renderer;
+    }
+
+    public  void loop(Map<String, Integer> input, int cardHeight, int cardWidth){
         GameState gameState = new GameState();
-        Map<String, Integer> input = InputInformationForCard.input();
-
-        int cardWidth = input.get("Width");
-        int cardHeight = input.get("Height");
-        Card card = new Card(cardWidth, cardHeight);
-
         Actions actions = new Actions(card,input);
         actions.setUpRandomPositionsForAllEntities();
 
@@ -35,7 +36,7 @@ public class Game {
             }
 
             try {
-                Thread.sleep(1000);
+                Thread.sleep(PAUSE_TIME_MS);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

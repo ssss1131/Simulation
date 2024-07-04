@@ -1,7 +1,10 @@
-package main.java.ssss;
+package main.java.ssss.Action;
 
 import main.java.ssss.Card.Card;
+import main.java.ssss.Card.CardUtils;
+import main.java.ssss.Coordinates.Coordinates;
 import main.java.ssss.Entity.*;
+import main.java.ssss.GameState;
 
 import java.util.Map;
 import java.util.Random;
@@ -10,10 +13,12 @@ public class Actions {
     private final Card card;
     private final Random random = new Random();
     private final Map<String, Integer> cells;
+    private final int grassCounter;
 
     public Actions(Card card, Map<String, Integer> cells) {
         this.card = card;
         this.cells = cells;
+        this.grassCounter = cells.get("Grass");
     }
 
     public void setUpRandomPositionsForAllEntities() {
@@ -63,11 +68,11 @@ public class Actions {
      */
 
     public void allActionsInCard(Card card) {
-        for (Creature creature : card.getAllAliveCreaturesOfType(Predator.class)) {
-            if (isPredatorDead(creature)) {
-                card.removeEntity(creature.coordinates);
+        for (Creature creature : CardUtils.getAllAliveCreaturesOfType(Predator.class,card)) {
+            if (creature.getHealthPoints() <= 0) {
+                card.removeEntity(creature.getCoordinates());
 
-            } else if (card.getAllAliveCreaturesOfType(Herbivore.class).isEmpty()) {
+            } else if (CardUtils.getAllAliveCreaturesOfType(Herbivore.class, card).isEmpty()) {
                 GameState.finishRequested = true;
                 break;
 
@@ -76,27 +81,17 @@ public class Actions {
             }
         }
 
-        for (Creature creature : card.getAllAliveCreaturesOfType(Herbivore.class)) {
+        for (Creature creature : CardUtils.getAllAliveCreaturesOfType(Herbivore.class, card)) {
             if(creature.getHealthPoints()<=0){
-                card.removeEntity(creature.coordinates);
+                card.removeEntity(creature.getCoordinates());
             }else{
                 creature.makeMove(card);
             }
-
-
         }
 
-        if (Grass.counter < cells.get("Grass")) {
-            regenerateGrass();
+        if (grassCounter> CardUtils.getGrassQuantity(card)) {
+            setUpPositionForEntity(Grass.class,grassCounter - CardUtils.getGrassQuantity(card));
         }
-    }
-
-    private void regenerateGrass() {
-        setUpPositionForEntity(Grass.class, cells.get("Grass") - Grass.counter);
-    }
-
-    private boolean isPredatorDead(Creature creature) {
-        return creature.getHealthPoints() <= 0;
     }
 
 }

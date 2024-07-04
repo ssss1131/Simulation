@@ -1,48 +1,37 @@
 package main.java.ssss.Entity;
 
-import main.java.ssss.BFS;
 import main.java.ssss.Card.Card;
-import main.java.ssss.Coordinates;
+import main.java.ssss.Coordinates.Coordinates;
 
-import java.util.List;
 
-public class Predator extends Creature {
+
+public class Predator extends Creature implements Attacker {
     private final int strength;
+    private static final int HEALTH_POINTS_GAINED_FROM_FOOD = 80;
 
     public Predator(Coordinates coordinates, int speed, int healthPoints, int strength) {
         super(coordinates, speed, healthPoints);
         this.strength = strength;
     }
 
-    /**
-     * Описывает метод для передвижение хищников по заданным координатам
-     * <p>
-     *     Данный метод реализует передвижение хишников, с помощью BFS находим лист координат для передвижение.
-     *     Первая проверка является ли пустым список проверяет может ли он в целом совершить ход.
-     *     Вторая проверка пустого листа проверяет дошли  ли мы до травоядного, если он пуст значит мы дошли
-     *     и надо нанести урон либо убить.Если он не пуст то мы меняем позицию и понижаем здоровье
-     *
-     */
+    @Override
+    public void handleTargetLocation(Coordinates coordinates, Card card) {
+        Creature attackedHerbivore = (Creature) card.getEntity(coordinates);
+        if (attackedHerbivore.getHealthPoints() - this.strength <= 0) {
+            this.healthPointsUp(HEALTH_POINTS_GAINED_FROM_FOOD);
+            card.changePosition(this.getCoordinates(), coordinates);
+        } else {
+            attack(attackedHerbivore);
+        }
+    }
 
     @Override
-    public void makeMove(Card card) {
-        List<Coordinates> allMoves = BFS.findAllValidMoves(this, card);
-        if (!allMoves.isEmpty()) {
-            Coordinates coordinatesToMove = allMoves.removeFirst();
-            if (allMoves.isEmpty()) {
-                Creature attackedHerbivore = (Creature) card.getEntity(coordinatesToMove);
-                if (attackedHerbivore.getHealthPoints() - this.strength <= 0) {
-                    this.healthPointsUp(80);
-                    card.changePosition(this.coordinates, coordinatesToMove);
-                } else {
-                    attackedHerbivore.attacked(this.strength);
-                }
-            } else {
-                card.changePosition(this.coordinates, coordinatesToMove);
-                this.healthPointsDown();
-            }
-        }
+    public boolean isFood(Entity entity) {
+        return entity instanceof Herbivore;
+    }
 
-
+    @Override
+    public void attack(Creature creature) {
+        creature.setHealthPoints(creature.getHealthPoints() - this.strength);
     }
 }

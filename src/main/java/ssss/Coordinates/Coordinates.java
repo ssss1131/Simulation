@@ -1,4 +1,4 @@
-package main.java.ssss;
+package main.java.ssss.Coordinates;
 
 import java.util.Objects;
 
@@ -23,10 +23,5 @@ public class Coordinates {
     @Override
     public int hashCode() {
         return Objects.hash(parrallel, meridian);
-    }
-
-    @Override
-    public String toString() {
-        return "parrallel= " + parrallel + ", meridian= " + meridian;
     }
 }

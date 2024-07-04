@@ -1,51 +1,61 @@
 package main.java.ssss.Card;
 
-import main.java.ssss.Coordinates;
+import main.java.ssss.Coordinates.Coordinates;
+import main.java.ssss.Coordinates.CoordinatesShift;
+import main.java.ssss.Entity.Creature;
+import main.java.ssss.Entity.Entity;
+import main.java.ssss.Entity.Grass;
+import main.java.ssss.EntityBetweenChecker;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CardUtils {
-    public static boolean isHaveParallelEntitiesBetween(Coordinates source, Coordinates target, Card card) {
-        //допускаем что они на одной меридиане
-        int parallelShift = source.parrallel < target.parrallel ? 1 : -1;
-        for (int parallel = source.parrallel + parallelShift; parallel != target.parrallel; parallel += parallelShift) {
-            Coordinates coordinatesBetween = new Coordinates(source.meridian, parallel);
-            if (!card.isSquareEmpty(coordinatesBetween))
-                return true;
+    public static Coordinates shift(Coordinates coordinates, CoordinatesShift coordinatesShift) {
+        return new Coordinates(coordinates.meridian + coordinatesShift.getMeridianShift(), coordinates.parrallel + coordinatesShift.getParallelShift());
+    }
+    public static boolean canShiftToSquare(Coordinates source, Coordinates target,Card card) {
+        //допускается что данный метод будет использоватся только при соблюдений условий трех методов в EntityBetweenChecker
+        boolean isMeridianValid = target.meridian > 0 && target.meridian <= card.getCardHeight();
+        boolean isParallelValid = target.parrallel > 0 && target.parrallel <= card.getCardWidth();
+
+        boolean validSquare = (card.isSquareEmpty(target)) && isMeridianValid && isParallelValid;
+        if(validSquare){
+            boolean checkParallelEqual = source.parrallel == target.parrallel;
+            boolean checkMeridianEqual = source.meridian == target.meridian;
+            boolean isHaveEntityBetween;
+            if(checkParallelEqual || checkMeridianEqual) isHaveEntityBetween = EntityBetweenChecker.isHaveParallelOrMeridianEntitiesBetween(source,target,card);
+            else{
+                isHaveEntityBetween = EntityBetweenChecker.isHaveDiagonalEntitiesBetween(source,target,card);
+            }
+            return !isHaveEntityBetween;
+
         }
+
         return false;
     }
 
-    public static boolean isHaveMeridianEntitiesBetween(Coordinates source, Coordinates target, Card card) {
-        //допускаем что они на одной параллели
-        int meridianShift = source.meridian < target.meridian ? 1 : -1;
-        for (int meridian = source.meridian + meridianShift; meridian != target.meridian; meridian += meridianShift) {
-            Coordinates coordinatesBetween = new Coordinates(meridian,source.parrallel);
-            if (!card.isSquareEmpty(coordinatesBetween))
-                return true;
+    public static int getGrassQuantity(Card card){
+        int result = 0;
+        for(Entity entity:card.getEntities().values()){
+            if(entity instanceof Grass){
+                result++;
+            }
         }
-        return false;
+        return result;
     }
 
-    public static boolean isHaveDiagonalEntitiesBetween(Coordinates source, Coordinates target, Card card) {
-        //допускаем что они на одной диагонали
-        int parallelShift = source.parrallel < target.parrallel ? 1 : -1;
-        int meridianShift = source.meridian < target.meridian ? 1 : -1;
-
-        for (
-                int parallelIndex = source.parrallel + parallelShift,
-                meridianIndex = source.meridian + meridianShift;
-
-                parallelIndex != target.parrallel && meridianIndex != target.meridian;
-
-                parallelIndex += parallelShift, meridianIndex += meridianShift
-        ) {
-            Coordinates coordinatesBetween = new Coordinates(meridianIndex, parallelIndex);
-            if (!card.isSquareEmpty(coordinatesBetween)) {
-                return true;
+    public static List<Creature> getAllAliveCreaturesOfType(Class<? extends Creature> entityType, Card card) {
+        List<Creature> result = new ArrayList<>();
+        for (Entity entity : card.getEntities().values()) {
+            if (entityType.isInstance(entity)) {
+                Creature creature =(Creature) entity;
+                result.add(creature);
             }
 
         }
-
-        return false;
+        return result;
     }
+
 
 }

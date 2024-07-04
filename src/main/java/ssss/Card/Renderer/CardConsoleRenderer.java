@@ -1,10 +1,9 @@
-package main.java.ssss.Card;
+package main.java.ssss.Card.Renderer;
 
-import main.java.ssss.Coordinates;
+import main.java.ssss.Card.Card;
+import main.java.ssss.Coordinates.Coordinates;
 import main.java.ssss.Entity.Creature;
 import main.java.ssss.Entity.Entity;
-import main.java.ssss.Entity.Herbivore;
-import main.java.ssss.Entity.Predator;
 
 
 public class CardConsoleRenderer {
@@ -42,9 +41,7 @@ public class CardConsoleRenderer {
             line += ANSI_RESET;
             System.out.println(line);
         }
-        printAllInformation(card);
-
-
+        PrintAboutCard.allInformation(card);
     }
 
     private String getSpriteForEmptySquare() {
@@ -56,19 +53,14 @@ public class CardConsoleRenderer {
     }
 
     private String selectUnicodeSpriteForEntity(Entity entity) {
-        switch (entity.getClass().getSimpleName()) {
-            case "Rock":
-                return ANSI_ROCK_BACKGROUND + " ⛰ ";
-            case "Tree":
-                return ANSI_TREE_BACKGROUND + " 🌳 ";
-            case "Grass":
-                return ANSI_GRASS_BACKGROUND + " 🌿 ";
-            case "Herbivore":
-                return chooseColorForHerbivore((Creature) entity);
-            case "Predator":
-                return chooseUnicodeSpriteForPredator((Creature) entity);
-        }
-        return "";
+        return switch (entity.getClass().getSimpleName()) {
+            case "Rock" -> ANSI_ROCK_BACKGROUND + " ⛰ ";
+            case "Tree" -> ANSI_TREE_BACKGROUND + " 🌳 ";
+            case "Grass" -> ANSI_GRASS_BACKGROUND + " 🌿 ";
+            case "Herbivore" -> chooseColorForHerbivore((Creature) entity);
+            case "Predator" -> chooseUnicodeSpriteForPredator((Creature) entity);
+            default -> "";
+        };
     }
 
     private String chooseUnicodeSpriteForPredator(Creature creature){
@@ -94,15 +86,6 @@ public class CardConsoleRenderer {
             return ANSI_1_RED_BACKGROUND + " 🐑 ";
         }
         return ANSI_HERBIVORE_DEATH;
-    }
-
-    private void printAllInformation(Card card){
-        int countOfHerbivore = card.getAllAliveCreaturesOfType(Herbivore.class).size();
-        int countOfPredator = card.getAllAliveCreaturesOfType(Predator.class).size();
-        System.out.println("Herbivore left: " + countOfHerbivore);
-        System.out.println("Predator left: " + countOfPredator);
-        System.out.println("[S]top to stop the simulation");
-        System.out.println("[F]inish to finish the simulation\n");
     }
 
 }

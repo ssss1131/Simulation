@@ -1,15 +1,21 @@
 ### IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+*.ipr
 out/
-!**/src/main/**/out/
-!**/src/test/**/out/
+target/
+*.class
+
+### Gradle ###
+.gradle/
+build/
 
 ### Eclipse ###
-.apt_generated
 .classpath
 .factorypath
 .project
-.settings
-.springBeans
+.settings/
 .sts4-cache
 bin/
 !**/src/main/**/bin/
@@ -25,5 +31,13 @@ bin/
 ### VS Code ###
 .vscode/
 
-### Mac OS ###
+### OS Specific ###
 .DS_Store
+Thumbs.db
+
+### Logs ###
+*.log
+
+### Temp Files ###
+*.tmp
+*.temp
